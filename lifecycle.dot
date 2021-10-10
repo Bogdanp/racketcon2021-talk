@@ -1,0 +1,6 @@
+digraph {
+  dependencies -> create;
+  create -> update;
+  update -> update;
+  update -> destroy;
+}
