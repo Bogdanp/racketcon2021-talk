@@ -60,25 +60,32 @@
  'next
  (item "Cross-platform.")
  'next
- (item "Flexible.")
+ (item "Powerful & flexible.")
  'next
  (item "Imperative.")
  'next
- (item "State management completely up to the user."))
+ (item "Unopinionated re. state management."))
 
 (slide
- #:name "racket/gui/easy"
+ #:name "gui-easy"
  (title "gui-easy")
  'next
  (item "Built on top of" (code racket/gui) ".")
  'next
- (item "State is propagated to views through Observables.")
- 'next
  (item "GUIs are constructed as trees of regular function calls.")
+ 'next
+ (item "State is propagated to views through Observables.")
  'next
  (item "Less flexible than" (code racket/gui) "."))
 
 (define (run-code stx)
+  (define ns
+    (let ([ns (make-base-namespace)])
+      (begin0 ns
+        (for ([mod (in-list '(racket/gui/base racket/gui/easy))])
+          (namespace-attach-module (current-namespace) mod ns))
+        (for ([mod (in-list '(racket/format))])
+          (namespace-require mod ns)))))
   (let/cc esc
     (parameterize ([uncaught-exception-handler
                     (lambda (e)
@@ -86,7 +93,8 @@
                       (esc))])
       (call-with-trusted-sandbox-configuration
        (lambda ()
-         (parameterize ([gui:current-eventspace (gui:make-eventspace)])
+         (parameterize ([gui:current-eventspace (gui:make-eventspace)]
+                        [current-namespace ns])
            (eval (syntax->datum stx))))))))
 
 (define-exec-code/scale 0.6 (rg-example-pict rg-example _rg-example-str)
@@ -94,7 +102,7 @@
 
   code:blank
   (define count 0)
-  (define (change-count! f)
+  (define (update-count! f)
     (set! count (f count))
     (send message set-label (~a count)))
 
@@ -106,7 +114,7 @@
          [label "-"]
          [parent panel]
          [callback (λ (self event)
-                     (change-count! sub1))]))
+                     (update-count! sub1))]))
   (define message
     (new message%
          [label "0"]
@@ -117,7 +125,7 @@
          [label "+"]
          [parent panel]
          [callback (λ (self event)
-                     (change-count! add1))]))
+                     (update-count! add1))]))
 
   code:blank
   (send frame show #t))
@@ -154,6 +162,25 @@
 (define-syntax-rule (code/small e0 e ...)
   (parameterize ([get-current-code-font-size (λ () 20)])
     (code e0 e ...)))
+
+(slide
+ #:name "views"
+ (title "Views")
+ 'next
+ (item "Regular Racket functions that combine to form the GUI hierarchy.")
+ 'next
+ (item "Know how to respond to Observable value changes.")
+ 'next
+ (ht-append
+  40
+  (code/small (text @message))
+  (code/small (choice
+               #:selection @selection
+               '("a" "b" "c")))
+  (code/small (canvas
+               @data
+               (λ (dc data)
+                 ...)))))
 
 (slide
  #:name "observables"
@@ -213,8 +240,8 @@
      (code:comment "  ..."))))))
 
 (slide
- #:name "views"
- (title "Views")
+ #:name "custom views"
+ (title "Custom Views")
  'alts
  (list
   (list
