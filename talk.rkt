@@ -227,7 +227,7 @@
      (code:comment "observer-2: count changed to 2")
      (code:comment "observer-3: count-squares changed to 4"))))
   (list
-   (para "Mapped observables can't be updated.")
+   (para "Derived observables can't be updated.")
    'next
    (para
     (code/small
@@ -246,10 +246,6 @@
  (list
   (list
    (para "Views implement the" (code view<%>) "interface.")
-   'next
-   (para
-    (code/small
-     (is-a? (text "hi") view<%>) (code:comment "=> #t")))
    'next
    (para
     (hc-append
