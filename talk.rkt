@@ -208,7 +208,7 @@
      (code:comment "observer-1: count changed to 1")
      (code:comment "observer-2: count changed to 1"))))
   (list
-   (para "Observables may be mapped.")
+   (para "Observables can be mapped.")
    (para
     (code/small
      (define @count-squares
@@ -227,7 +227,7 @@
      (code:comment "observer-2: count changed to 2")
      (code:comment "observer-3: count-squares changed to 4"))))
   (list
-   (para "Derived observables can't be updated.")
+   (para "Derived observables may not be updated.")
    'next
    (para
     (code/small
